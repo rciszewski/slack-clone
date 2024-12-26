@@ -12,11 +12,14 @@ import { useCreateWorkspaceModal } from "../store/use-create-workspace-modal";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useCreateWorkSpace } from "../api/use-create-workspace";
+import { useRouter } from "next/navigation";
 
 export const CreateWorkspaceModal = () => {
   const [open, setOpen] = useCreateWorkspaceModal();
 
-  const { mutate } = useCreateWorkSpace();
+  const { mutate, isPending } = useCreateWorkSpace();
+
+  const router = useRouter();
 
   const handleClose = () => {
     setOpen(false);
@@ -24,22 +27,23 @@ export const CreateWorkspaceModal = () => {
   };
 
   const handleSubmit = () => {
-    mutate(
-      {
-        name: "workspace 1",
-      },
-      {
-        onSuccess: () => {
-          //redirect to workspace id
+    try {
+      const data = mutate(
+        {
+          name: "workspace 1",
         },
-        onError: () => {
-          //show toast error
-        },
-        onSettled: () => {
-          //reset form
-        },
-      }
-    );
+        {
+          onSuccess: (data) => {
+            //redirect to workspace id
+            router.push(`/workspaces/${data}`);
+          },
+          onError: (error) => {},
+          onSettled: () => {
+            //reset form
+          },
+        }
+      );
+    } catch (error) {}
   };
 
   return (
@@ -51,7 +55,7 @@ export const CreateWorkspaceModal = () => {
         <form className="space-y-4">
           <Input
             value=""
-            disabled={false}
+            disabled={isPending}
             required
             autoFocus
             minLength={3}
