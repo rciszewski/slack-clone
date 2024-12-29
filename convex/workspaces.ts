@@ -5,7 +5,30 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 export const get = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("workspaces").collect();
+    const userId = await getAuthUserId(ctx);
+
+    if (!userId) {
+      return [];
+    }
+
+    const members = await ctx.db
+      .query("members")
+      .withIndex("by_user_id", (q) => q.eq("userId", userId))
+      .collect();
+
+    const workspaceIds = members.map((member) => member.workspaceId);
+
+    const workspaces = [];
+
+    for (const id of workspaceIds) {
+      const workspace = await ctx.db.get(id);
+      if (workspace) {
+        workspaces.push(workspace);
+      }
+    }
+    console.log("workspaces", workspaces);
+
+    return workspaces;
   },
 });
 
@@ -18,7 +41,7 @@ export const getById = query({
       throw new Error("Unauthorized");
     }
 
-    return await ctx.db.get(args.id)
+    return await ctx.db.get(args.id);
   },
 });
 
@@ -40,6 +63,13 @@ export const create = mutation({
       userId,
       joinCode,
     });
+
+    await ctx.db.insert("members", {
+      userId,
+      workspaceId,
+      role: "admin",
+    });
+
     return workspaceId;
   },
 });
