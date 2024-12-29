@@ -5,7 +5,7 @@ import { useCreateWorkspaceModal } from "@/features/workspaces/store/use-create-
 
 import { useGetWorkSpaces } from "@/features/workspaces/api/use-get-workspaces";
 import { useEffect, useMemo } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const router = useRouter();
@@ -14,15 +14,14 @@ export default function Home() {
   const { data, isLoading } = useGetWorkSpaces();
 
   const workspaceId = useMemo(() => data?.[0]?._id, [data]);
-  const pathname = usePathname();
   useEffect(() => {
     if (isLoading) return;
     if (workspaceId) {
       router.replace(`/workspace/${workspaceId}`);
-    } else if (!open && !pathname.includes("auth") && pathname !== "/") {
+    } else if (!open) {
       setOpen(true);
     }
-  }, [workspaceId, isLoading, open, setOpen, router, pathname]);
+  }, [workspaceId, isLoading, open, setOpen, router]);
 
   return (
     <div>

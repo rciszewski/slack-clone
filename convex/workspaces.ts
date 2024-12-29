@@ -26,7 +26,6 @@ export const get = query({
         workspaces.push(workspace);
       }
     }
-    console.log("workspaces", workspaces);
 
     return workspaces;
   },
@@ -39,6 +38,17 @@ export const getById = query({
 
     if (!userId) {
       throw new Error("Unauthorized");
+    }
+
+    const member = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id_user_id", (q) =>
+        q.eq("workspaceId", args.id).eq("userId", userId)
+      )
+      .unique();
+
+    if (!member) {
+      return null;
     }
 
     return await ctx.db.get(args.id);

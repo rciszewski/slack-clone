@@ -9,12 +9,10 @@ import { Loader, LogOut } from "lucide-react";
 
 import { useCurrentUser } from "../api/use-current-user";
 import { useAuthActions } from "@convex-dev/auth/react";
-import { useRouter } from "next/navigation";
 
 export const UserButton = () => {
   const { data, isLoading } = useCurrentUser();
   const { signOut } = useAuthActions();
-  const router = useRouter();
 
   if (isLoading) {
     return <Loader className="size-4 animate-spin text-muted-foreground" />;
@@ -40,9 +38,13 @@ export const UserButton = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="center" side="right" className="w-60">
         <DropdownMenuItem
-          onClick={() => {
-            router.push("/auth");
-            signOut();
+          onClick={async () => {
+            try {
+              await signOut();
+              window.location.href = "/auth";
+            } catch (error) {
+              console.error("Error signing out:", error);
+            }
           }}
           className="h-10"
         >
