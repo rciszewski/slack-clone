@@ -55,6 +55,14 @@ export const getById = query({
   },
 });
 
+const generateCode = () => {
+  const code = Array.from(
+    { length: 6 },
+    () => "0123456789abcdefghijklmnopqrstuvwxyz"[Math.floor(Math.random() * 36)]
+  ).join("");
+  return code;
+};
+
 export const create = mutation({
   args: {
     name: v.string(),
@@ -65,8 +73,7 @@ export const create = mutation({
       throw new Error("Unauthorized");
     }
 
-    //TODO: create a proper method later
-    const joinCode = "123456";
+    const joinCode = generateCode();
 
     const workspaceId = await ctx.db.insert("workspaces", {
       name: args.name,
