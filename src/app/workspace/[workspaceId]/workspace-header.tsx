@@ -8,7 +8,9 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDown } from "lucide-react";
+
+import { ChevronDown, ListFilter, SquarePen } from "lucide-react";
+import Hint from "@/components/hint";
 
 interface WorkspaceHeaderProps {
   workspace: Doc<"workspaces">;
@@ -26,7 +28,7 @@ const WorkspaceHeader = ({ workspace, isAdmin }: WorkspaceHeaderProps) => {
             size={"sm"}
           >
             <span className="truncate">{workspace.name}</span>
-            <ChevronDown className="size-4 ml-1 shrink-0" />
+            <ChevronDown className="size-4 shrink-0" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent side="bottom" align="start" className="w-64">
@@ -57,6 +59,18 @@ const WorkspaceHeader = ({ workspace, isAdmin }: WorkspaceHeaderProps) => {
           )}
         </DropdownMenuContent>
       </DropdownMenu>
+      <div className="flex items-center gap-0.5">
+        <Hint side="bottom" label="Filter conversations">
+          <Button variant={"transparent"} size={"sm"}>
+            <ListFilter className="size-4" />
+          </Button>
+        </Hint>
+        <Hint side="bottom" label="New message">
+          <Button variant={"transparent"} size={"sm"}>
+            <SquarePen className="size-4" />
+          </Button>
+        </Hint>
+      </div>
     </div>
   );
 };
