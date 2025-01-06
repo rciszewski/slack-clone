@@ -1,8 +1,9 @@
 import { useCurrentMember } from "@/features/members/api/use-current-member";
 import { useGetWorkSpace } from "@/features/workspaces/api/use-get-workspace";
 import { useWorkSpaceId } from "@/hooks/use-workspace-id";
-import { AlertTriangle, Loader } from "lucide-react";
+import { AlertTriangle, Loader, MessageSquareText, SendHorizonal } from "lucide-react";
 import WorkspaceHeader from "./workspace-header";
+import SidebarItem from "./sidebar-item";
 
 const WorkspaceSidebar = () => {
   const workspaceId = useWorkSpaceId();
@@ -35,6 +36,8 @@ const WorkspaceSidebar = () => {
         workspace={workspace}
         isAdmin={member.role === "admin"}
       />
+      <SidebarItem label="Threads" icon={MessageSquareText} id="threads" />
+      <SidebarItem label="Drafts & Sent" icon={SendHorizonal} id="drafts" />
     </div>
   );
 };
