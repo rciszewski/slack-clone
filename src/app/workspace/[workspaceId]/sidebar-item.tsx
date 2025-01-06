@@ -37,7 +37,7 @@ const SidebarItem = ({ label, id, icon: Icon, variant }: SidebarItemProps) => {
       size={"sm"}
       asChild
     >
-      <Link href={`/workspace/${workspaceId}`}>
+      <Link href={`/workspace/${workspaceId}/${id}`}>
         <Icon className="size-3.5 mr-1 shrink-0" />
         <span className="text-sm truncate">{label}</span>
       </Link>
