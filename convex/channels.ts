@@ -19,7 +19,7 @@ export const get = query({
         q.eq("workspaceId", args.workspaceId).eq("userId", userId)
       )
       .unique();
-      
+
     if (!member) {
       return [];
     }
@@ -38,20 +38,33 @@ export const get = query({
 export const create = mutation({
   args: {
     workspaceId: v.id("workspaces"),
-    name: v.string()
+    name: v.string(),
   },
   handler: async (ctx, args) => {
-    const userId = getAuthUserId(ctx);
+    const userId = await getAuthUserId(ctx);
 
     if (!userId) {
       throw new Error("Unauthorized");
     }
 
-    const channel = await ctx.db.insert("channels", {
-      workspaceId: args.workspaceId,
-      name: args.name
-    })
+    const member = await ctx.db
+      .query("members")
+      .withIndex("by_workspace_id_user_id", (q) =>
+        q.eq("workspaceId", args.workspaceId).eq("userId", userId)
+      )
+      .unique();
 
-    return channel
-  }
+    if (!member || member.role !== "admin") {
+      throw new Error("Unauthorized");
+    }
+
+    const parsedName = args.name.replace(/\+/g, "-").toLowerCase();
+
+    const channelId = await ctx.db.insert("channels", {
+      workspaceId: args.workspaceId,
+      name: parsedName,
+    });
+
+    return channelId;
+  },
 });
